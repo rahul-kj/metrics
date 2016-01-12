@@ -1,0 +1,97 @@
+<html ng-app="deploymentApp">
+<head>
+<meta charset="utf-8">
+<title>Ops Metrics Data</title>
+<link rel="stylesheet"
+	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.0-rc.0/angular.min.js"></script>
+<script src="https://code.jquery.com/jquery-1.12.0.min.js"
+	type="text/javascript"></script>
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
+	type="text/javascript"></script>
+
+<script>
+	var deploymentApp = angular
+			.module('deploymentApp', [])
+			.directive(
+					'loading',
+					function() {
+						return {
+							restrict : 'E',
+							replace : true,
+							template : '<div class="loading"><img src="http://www.nasa.gov/multimedia/videogallery/ajax-loader.gif" width="20" height="20" align="center"/>Please wait while the data is being pulled</div>',
+							link : function(scope, element, attr) {
+								scope.$watch('loading', function(val) {
+									if (val)
+										$(element).show();
+									else
+										$(element).hide();
+								});
+							}
+						}
+					}).directive('collapseToggler', function() {
+				return {
+					restrict : 'A',
+					link : function(scope, element, attr) {
+						element.on('click', function() {
+							$(this).siblings('.collapse').toggleClass('in');
+							if($(this).find('.glyphicon').hasClass("glyphicon-chevron-down")) {
+								$(this).find('.glyphicon').removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
+							} else {
+								$(this).find('.glyphicon').removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
+							}
+						});
+					}
+				};
+			}).controller(
+					'DeploymentCtrl',
+					function($scope, $http) {
+						$scope.loading = true;
+						$http.get('http://localhost:8080/mbeans/').success(
+								function(data) {
+									$scope.deployments = data.deployments;
+									$scope.loading = false;
+								}).error(
+								function(response) {
+									$('.alert-danger').html("Error while invoking the server").show();
+									$scope.loading = false;
+								});
+					});
+</script>
+
+
+</head>
+<body ng-controller="DeploymentCtrl">
+	<loading></loading>
+	<div ng-repeat="deployment in deployments">
+		<div collapse-toggler class="toggler">
+			<div class="alert alert-info" role="alert"><a href="#"><i class="glyphicon glyphicon-chevron-down"></i> Deployment Name : {{deployment.name}} </a></div>
+		</div>
+		<div class="collapse">
+			<div ng-repeat="job in deployment.jobs">
+				<div collapse-toggler class="toggler">
+					<ul class="list-group">
+						<li class="list-group-item"><div class="alert alert-success" role="alert"> <a href="#"> <i class="glyphicon glyphicon-chevron-down" aria-hidden="true"></i> Job Name - {{job.job}} : Job IP -
+							{{job.ip}} </a> </div></li>
+					</ul>
+				</div>
+				<div class="collapse">
+					<table class="table table-striped">
+						<tr>
+							<td>Attribute Name</td>
+							<td>Attribute Value</td>
+						</tr>
+						<tr ng-repeat="attribute in job.attributes">
+							<td>{{attribute.name}}</td>
+							<td>{{attribute.value}}</td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="alert alert-danger" role="alert" hidden="true"></div>
+</body>
+</html>
