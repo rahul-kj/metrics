@@ -1,20 +1,17 @@
 package com.rahul.domain;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
-public class Job implements Serializable {
+public class JobDetail implements Serializable {
 
 	private static final long serialVersionUID = -8484612833599570476L;
-	
+
+	String deployment;
 	String job;
 	String ip;
 	String index;
-
-	List<Attribute> attributes = new ArrayList<>();
 
 	public String getJob() {
 		return job;
@@ -40,14 +37,14 @@ public class Job implements Serializable {
 		this.index = index;
 	}
 
-	public List<Attribute> getAttributes() {
-		return attributes;
+	public String getDeployment() {
+		return deployment;
 	}
 
-	public void addAttribute(Attribute attribute) {
-		this.getAttributes().add(attribute);
+	public void setDeployment(String deployment) {
+		this.deployment = deployment;
 	}
-	
+
 	@Override
 	public String toString() {
 		return ToStringBuilder.reflectionToString(this);

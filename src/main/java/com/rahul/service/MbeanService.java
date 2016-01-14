@@ -2,9 +2,7 @@ package com.rahul.service;
 
 import java.lang.reflect.Field;
 import java.util.Enumeration;
-import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Map;
 import java.util.Set;
 
 import javax.management.MBeanAttributeInfo;
@@ -15,98 +13,81 @@ import javax.management.ObjectName;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import com.rahul.domain.Attribute;
-import com.rahul.domain.Deployment;
-import com.rahul.domain.Job;
+import com.rahul.domain.CustomJobMetric;
+import com.rahul.domain.FixedAttribute;
+import com.rahul.domain.JobDetail;
 import com.rahul.domain.Metrics;
+import com.rahul.domain.VMMetric;
 
 @Service
 public class MbeanService {
 	@Autowired
 	MBeanServerConnection connection;
 
-	private Map<String, Deployment> deploymentsMap;
-
 	public Metrics getMetrics() {
-		deploymentsMap = new HashMap<>();
-		
+		Metrics metrics = new Metrics();
+
 		Set<ObjectInstance> objects;
 		try {
 			objects = connection.queryMBeans(new ObjectName("org.cloudfoundry:*"), null);
-			
+
 			System.out.println("Initial Jobs size is " + objects.size());
 
 			for (ObjectInstance object : objects) {
-				populateMap(object);
+				populateMetrics(object, metrics);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
-		int finalSize = 0;
-		Metrics metrics = new Metrics();
-
-		Set<String> deploymentNames = deploymentsMap.keySet();
-		for (String deploymentName : deploymentNames) {
-			Deployment deployment = deploymentsMap.get(deploymentName);
-			metrics.addDeployment(deployment);
-			finalSize += deployment.getJobs().size();
-		}
-		
+		int finalSize = metrics.getCustomJobMetrics().size() + metrics.getVmMetrics().size();
 		System.out.println("Final Jobs size is " + finalSize);
-		
-		deploymentsMap = null;
+		System.out.println("Metrics - " + metrics);
 
 		return metrics;
 	}
 
-	private void populateMap(ObjectInstance object) throws Exception {
+	private void populateMetrics(ObjectInstance object, Metrics metrics) throws Exception {
 		ObjectName objectName = object.getObjectName();
-
-		Deployment deployment = null;
-
-		populateDeployment(objectName, deployment);
-	}
-
-	private void populateDeployment(ObjectName objectName, Deployment deployment) throws Exception {
 		Hashtable<String, String> keyPropertyList = objectName.getKeyPropertyList();
-		Job job = new Job();
+		JobDetail jobDetail = new JobDetail();
 
 		Enumeration<String> keys = keyPropertyList.keys();
 		while (keys.hasMoreElements()) {
 			String key = (String) keys.nextElement();
 			String value = keyPropertyList.get(key);
-
-			if (key.equals("deployment")) {
-				deployment = deploymentsMap.containsKey(value) ? deploymentsMap.get(value) : new Deployment(value);
-			} else if (!key.isEmpty()) {
-				populateJob(job, key, value);
-			}
+			populateObject(jobDetail, key, value);
 		}
 
-		populateJobWithAttributes(objectName, job);
-
-		if (deployment != null) {
-			deployment.addJobs(job);
-			deploymentsMap.put(deployment.getName(), deployment);
+		if ((StringUtils.isEmpty(jobDetail.getIp()) || jobDetail.getIp().equalsIgnoreCase("null"))
+				&& !jobDetail.getDeployment().equalsIgnoreCase("untitled_dev")) {
+			VMMetric vmMetric = populateVMMetrics(objectName, jobDetail);
+			vmMetric.setJobDetail(jobDetail);
+			metrics.addVmMetrics(vmMetric);
+		} else {
+			CustomJobMetric customJobMetric = populateCustomJobMetrics(objectName, jobDetail);
+			customJobMetric.setJobDetail(jobDetail);
+			metrics.addCustomJobMetrics(customJobMetric);
 		}
+
 	}
 
-	private void populateJob(Job job, String key, String value) {
+	private void populateObject(Object obj, String key, String value) {
 		try {
-			Field field = Job.class.getDeclaredField(key);
+			Field field = obj.getClass().getDeclaredField(key);
 			field.setAccessible(true);
-			field.set(job, value);
+			field.set(obj, value);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	private void populateJobWithAttributes(ObjectName objectName, Job job) throws Exception {
-		if (job == null) {
-			return;
-		}
+	private VMMetric populateVMMetrics(ObjectName objectName, JobDetail jobDetail) throws Exception {
+		VMMetric vmMetric = new VMMetric();
+		FixedAttribute fixedAttribute = new FixedAttribute();
 
 		MBeanInfo mBeanInfo = connection.getMBeanInfo(objectName);
 		MBeanAttributeInfo[] attributes = mBeanInfo.getAttributes();
@@ -115,9 +96,33 @@ public class MbeanService {
 				String attributeName = mBeanAttributeInfo.getName();
 				Object attributeValue = connection.getAttribute(objectName, attributeName);
 
-				job.addAttribute(new Attribute(attributeName, attributeValue.toString()));
+				String fieldName = attributeName.replace(".", "_");
+				String fieldValue = attributeValue.toString();
+
+				populateObject(fixedAttribute, fieldName, fieldValue);
 			}
 		}
+
+		vmMetric.setFixedAttribute(fixedAttribute);
+		vmMetric.setJobDetail(jobDetail);
+
+		return vmMetric;
+	}
+
+	private CustomJobMetric populateCustomJobMetrics(ObjectName objectName, JobDetail job) throws Exception {
+		CustomJobMetric customJobMetric = new CustomJobMetric();
+
+		MBeanInfo mBeanInfo = connection.getMBeanInfo(objectName);
+		MBeanAttributeInfo[] attributes = mBeanInfo.getAttributes();
+		if (attributes != null) {
+			for (MBeanAttributeInfo mBeanAttributeInfo : attributes) {
+				String attributeName = mBeanAttributeInfo.getName();
+				Object attributeValue = connection.getAttribute(objectName, attributeName);
+				customJobMetric.addCustomAttributes(new Attribute(attributeName, attributeValue.toString()));
+			}
+		}
+
+		return customJobMetric;
 	}
 
 }

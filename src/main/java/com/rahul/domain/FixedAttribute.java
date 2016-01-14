@@ -2,7 +2,7 @@ package com.rahul.domain;
 
 import java.io.Serializable;
 
-public class FixedAttributes implements Serializable {
+public class FixedAttribute implements Serializable {
 
 	private static final long serialVersionUID = -6109341777090339905L;
 
