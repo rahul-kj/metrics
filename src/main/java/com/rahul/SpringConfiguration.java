@@ -20,7 +20,10 @@ public class SpringConfiguration {
 	@Bean
 	public MBeanServerConnectionFactoryBean connection() {
 		String host = System.getenv(SERVER_IP);
-		String port = System.getenv(SERVER_PORT) != null ? System.getProperty(SERVER_PORT) : "44444";
+		String port = System.getenv(SERVER_PORT) != null ? System.getenv(SERVER_PORT) : "44444";
+		
+		System.out.println("PORT IS " + port);
+		
 		String username = System.getenv(USERNAME);
 		String password = System.getenv(PASSWORD);
 
