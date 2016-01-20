@@ -23,7 +23,7 @@ import com.rahul.domain.Metrics;
 import com.rahul.domain.VMMetric;
 
 @Service
-public class MbeanService {
+public class MetricService {
 	@Autowired
 	MBeanServerConnection connection;
 

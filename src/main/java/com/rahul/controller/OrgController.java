@@ -1,28 +1,29 @@
 package com.rahul.controller;
 
 import java.util.Date;
+import java.util.List;
 
+import org.cloudfoundry.client.lib.domain.CloudOrganization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.rahul.domain.Metrics;
-import com.rahul.service.MbeanService;
+import com.rahul.service.OrgService;
 
 @RestController
-@RequestMapping("/mbeans")
-public class MbeanController {
+@RequestMapping("/orgs")
+public class OrgController {
 	@Autowired
-	MbeanService mbeanService;
-
+	OrgService orgService;
+	
 	@CrossOrigin
-	@RequestMapping(method = RequestMethod.GET, value = "/")
-	public Metrics getAllMetrics() {
+	@RequestMapping(method = RequestMethod.GET)
+	public List<CloudOrganization> getOrgs() {
 		System.out.println("Got a request - " + new Date());
-		Metrics metrics = mbeanService.getMetrics();
+		List<CloudOrganization> orgs = orgService.getOrgs();
 		System.out.println("Sending response - " + new Date());
-		return metrics;
+		return orgs;
 	}
 }

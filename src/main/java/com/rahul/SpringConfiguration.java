@@ -1,31 +1,30 @@
 package com.rahul;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.cloudfoundry.client.lib.CloudCredentials;
+import org.cloudfoundry.client.lib.CloudFoundryClient;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jmx.support.MBeanServerConnectionFactoryBean;
 
 @Configuration
 public class SpringConfiguration {
-	private static final String SERVER_IP = "host";
-	private static final String SERVER_PORT = "port";
-	private static final String USERNAME = "username";
-	private static final String PASSWORD = "password";
-	
-	private static final String JMX_URL="service:jmx:rmi://%s:%s/jndi/rmi://%s:%s/jmxrmi";
+
+	private static final String JMX_URL = "service:jmx:rmi://%s:%s/jndi/rmi://%s:%s/jmxrmi";
 
 	@Bean
-	public MBeanServerConnectionFactoryBean connection() {
-		String host = System.getenv(SERVER_IP);
-		String port = System.getenv(SERVER_PORT) != null ? System.getenv(SERVER_PORT) : "44444";
-		
+	public MBeanServerConnectionFactoryBean connection(@Value("${jmx.host}") String host,
+			@Value("${jmx.port}") String port, @Value("${jmx.username}") String username,
+			@Value("${jmx.password}") String password) {
+
+		port = port != null ? port : "44444";
 		System.out.println("PORT IS " + port);
-		
-		String username = System.getenv(USERNAME);
-		String password = System.getenv(PASSWORD);
 
 		MBeanServerConnectionFactoryBean factoryBean = new MBeanServerConnectionFactoryBean();
 		try {
@@ -42,10 +41,28 @@ public class SpringConfiguration {
 		return factoryBean;
 	}
 
+	@Bean
+	CloudFoundryClient cloudFoundryClient(@Value("${cf.target}") String target, @Value("${cf.username}") String username,
+			@Value("${cf.password}") String password) {
+		
+		CloudCredentials credentials = new CloudCredentials(username, password);
+        CloudFoundryClient client = new CloudFoundryClient(credentials, getTargetURL(target), true);
+        client.login();
+		return client;
+	}
+	
+	private static URL getTargetURL(String target) {
+        try {
+            return URI.create(target).toURL();
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("The target URL is not valid: " + e.getMessage());
+        }
+    }
+
 	private String createServiceURL(String host, String port) {
 		String serviceURL = String.format(JMX_URL, host, port, host, port);
 		System.out.println(serviceURL);
 		return serviceURL;
 	}
-	
+
 }
