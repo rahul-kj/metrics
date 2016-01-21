@@ -6,14 +6,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class BuildpackService {
+public class RouteService {
 	@Autowired
 	CloudFoundryClientService clientService;
-
-	public Integer getTotalBuildpacks() {
-		Map<String, Object> respMap = clientService.getResponseMap("/v2/buildpacks");
+	
+	public Integer getTotalRoutes() {
+		Map<String, Object> respMap = clientService.getResponseMap("/v2/routes");
 		Integer totalCount = clientService.getTotalResults(respMap);
 		return totalCount;
 	}
-
 }

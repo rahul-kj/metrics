@@ -25,7 +25,7 @@ public class SpringConfiguration {
 
 		port = port != null ? port : "44444";
 		System.out.println("PORT IS " + port);
-
+		
 		MBeanServerConnectionFactoryBean factoryBean = new MBeanServerConnectionFactoryBean();
 		try {
 			String serviceURL = createServiceURL(host, port);
