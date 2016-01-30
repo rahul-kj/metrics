@@ -1,14 +1,14 @@
 ---
-applications: 
+applications:
 - name: metrics
   memory: 1024M
   path: target/metrics-0.0.1-SNAPSHOT.jar
   buildpack: java_buildpack_offline
   env:
-    jmx.host: <your-ops-metrics-ip>
+    jmx.host: 172.16.1.89
     jmx.port: 44444
-    jmx.username: <ops-metrics-username>
-    jmx.password: <ops-metrics-password>
-    cf.target: https://api.<system-domain>
-    cf.username: <cf username>
-    cf.password: <cf password>
+    jmx.username: jmxadmin
+    jmx.password: jmxadmin
+    cf.target: https://api.sys.homelab.io
+    cf.username: rjain@pivotal.io
+    cf.password: Welcome12#

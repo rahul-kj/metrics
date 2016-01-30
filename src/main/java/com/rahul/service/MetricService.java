@@ -75,13 +75,13 @@ public class MetricService {
 
 	}
 
-	private void populateObject(Object obj, String key, String value) {
+	private void populateObject(Object obj, String key, String value) throws Exception {
 		try {
 			Field field = obj.getClass().getDeclaredField(key);
 			field.setAccessible(true);
 			field.set(obj, value);
 		} catch (Exception e) {
-			e.printStackTrace();
+			throw e;
 		}
 	}
 
@@ -99,7 +99,11 @@ public class MetricService {
 				String fieldName = attributeName.replace(".", "_");
 				String fieldValue = attributeValue.toString();
 
-				populateObject(fixedAttribute, fieldName, fieldValue);
+				try {
+					populateObject(fixedAttribute, fieldName, fieldValue);
+				} catch (Exception e) {
+					vmMetric.addCustomAttributes(new Attribute(attributeName, attributeValue.toString()));
+				}
 			}
 		}
 

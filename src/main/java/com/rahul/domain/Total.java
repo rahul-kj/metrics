@@ -17,6 +17,15 @@ public class Total implements Serializable {
 	private int serviceBrokersCount;
 	private int serviceInstancesCount;
 
+	private int appCreateEventsCount;
+	private int appDeleteEventsCount;
+	private int appCrashEventsCount;
+	private int appAuthorizedSSHEventsCount;
+	private int appUnAuthorizedSSHEventsCount;
+	private int appStartEventsCount;
+	private int appStopEventsCount;
+	private int appUpdateEventsCount;
+
 	public int getOrgsCount() {
 		return orgsCount;
 	}
@@ -87,6 +96,70 @@ public class Total implements Serializable {
 
 	public void setBuildpacksCount(int buildpacksCount) {
 		this.buildpacksCount = buildpacksCount;
+	}
+
+	public int getAppCreateEventsCount() {
+		return appCreateEventsCount;
+	}
+
+	public void setAppCreateEventsCount(int appCreateEventsCount) {
+		this.appCreateEventsCount = appCreateEventsCount;
+	}
+
+	public int getAppDeleteEventsCount() {
+		return appDeleteEventsCount;
+	}
+
+	public void setAppDeleteEventsCount(int appDeleteEventsCount) {
+		this.appDeleteEventsCount = appDeleteEventsCount;
+	}
+
+	public int getAppCrashEventsCount() {
+		return appCrashEventsCount;
+	}
+
+	public void setAppCrashEventsCount(int appCrashEventsCount) {
+		this.appCrashEventsCount = appCrashEventsCount;
+	}
+
+	public int getAppAuthorizedSSHEventsCount() {
+		return appAuthorizedSSHEventsCount;
+	}
+
+	public void setAppAuthorizedSSHEventsCount(int appAuthorizedSSHEventsCount) {
+		this.appAuthorizedSSHEventsCount = appAuthorizedSSHEventsCount;
+	}
+
+	public int getAppUnAuthorizedSSHEventsCount() {
+		return appUnAuthorizedSSHEventsCount;
+	}
+
+	public void setAppUnAuthorizedSSHEventsCount(int appUnAuthorizedSSHEventsCount) {
+		this.appUnAuthorizedSSHEventsCount = appUnAuthorizedSSHEventsCount;
+	}
+
+	public int getAppStartEventsCount() {
+		return appStartEventsCount;
+	}
+
+	public void setAppStartEventsCount(int appStartEventsCount) {
+		this.appStartEventsCount = appStartEventsCount;
+	}
+
+	public int getAppStopEventsCount() {
+		return appStopEventsCount;
+	}
+
+	public void setAppStopEventsCount(int appStopEventsCount) {
+		this.appStopEventsCount = appStopEventsCount;
+	}
+
+	public int getAppUpdateEventsCount() {
+		return appUpdateEventsCount;
+	}
+
+	public void setAppUpdateEventsCount(int appUpdateEventsCount) {
+		this.appUpdateEventsCount = appUpdateEventsCount;
 	}
 
 }
