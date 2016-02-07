@@ -35,7 +35,6 @@ public class TotalsService {
 	public Total getTotals() {
 		Total total = new Total();
 
-		total.setApplicationsCount(applicationService.getTotalApps());
 		total.setBuildpacksCount(buildpackService.getTotalBuildpacks());
 		total.setOrgsCount(orgService.getTotalOrgs());
 		total.setRoutesCount(routeService.getTotalRoutes());
@@ -52,6 +51,8 @@ public class TotalsService {
 		total.setAppStopEventsCount(eventService.getTotalAppStopEvents());
 		total.setAppCrashEventsCount(eventService.getTotalAppCrashEvents());
 		total.setAppUpdateEventsCount(eventService.getTotalAppUpdateEvents());
+		
+		applicationService.populateAppCounts(total);
 
 		return total;
 	}

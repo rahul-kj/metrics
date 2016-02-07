@@ -10,6 +10,10 @@ public class Total implements Serializable {
 	private int spacesCount;
 	private int usersCount;
 	private int applicationsCount;
+	private int applicationInstanceCount;
+	private int runningApplicationInstanceCount;
+	private int totalDiegoAppsCount;
+	private int totalWardenAppsCount;
 	private int buildpacksCount;
 	private int routesCount;
 
@@ -160,6 +164,38 @@ public class Total implements Serializable {
 
 	public void setAppUpdateEventsCount(int appUpdateEventsCount) {
 		this.appUpdateEventsCount = appUpdateEventsCount;
+	}
+
+	public int getApplicationInstanceCount() {
+		return applicationInstanceCount;
+	}
+
+	public void setApplicationInstanceCount(int applicationInstanceCount) {
+		this.applicationInstanceCount = applicationInstanceCount;
+	}
+
+	public int getRunningApplicationInstanceCount() {
+		return runningApplicationInstanceCount;
+	}
+
+	public void setRunningApplicationInstanceCount(int runningApplicationInstanceCount) {
+		this.runningApplicationInstanceCount = runningApplicationInstanceCount;
+	}
+
+	public int getTotalDiegoAppsCount() {
+		return totalDiegoAppsCount;
+	}
+
+	public void setTotalDiegoAppsCount(int totalDiegoAppsCount) {
+		this.totalDiegoAppsCount = totalDiegoAppsCount;
+	}
+
+	public int getTotalWardenAppsCount() {
+		return totalWardenAppsCount;
+	}
+
+	public void setTotalWardenAppsCount(int totalWardenAppsCount) {
+		this.totalWardenAppsCount = totalWardenAppsCount;
 	}
 
 }
