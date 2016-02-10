@@ -1,5 +1,8 @@
 package com.rahul.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -32,28 +35,29 @@ public class TotalsService {
 	@Autowired
 	EventService eventService;
 
-	public Total getTotals() {
-		Total total = new Total();
-
-		total.setBuildpacksCount(buildpackService.getTotalBuildpacks());
-		total.setOrgsCount(orgService.getTotalOrgs());
-		total.setRoutesCount(routeService.getTotalRoutes());
-		total.setSpacesCount(spaceService.getTotalSpaces());
-		total.setServiceBrokersCount(servicesService.getTotalServiceBrokers());
-		total.setServicesCount(servicesService.getTotalServices());
-		total.setServiceInstancesCount(servicesService.getTotalServiceInstances());
-		total.setUsersCount(userService.getTotalUsers());
-		total.setAppCreateEventsCount(eventService.getTotalAppCreateEvents());
-		total.setAppDeleteEventsCount(eventService.getTotalAppDeleteEvents());
-		total.setAppAuthorizedSSHEventsCount(eventService.getTotalAuthorizedSSHEvents());
-		total.setAppUnAuthorizedSSHEventsCount(eventService.getTotaUnlAuthorizedSSHEvents());
-		total.setAppStartEventsCount(eventService.getTotalAppStartEvents());
-		total.setAppStopEventsCount(eventService.getTotalAppStopEvents());
-		total.setAppCrashEventsCount(eventService.getTotalAppCrashEvents());
-		total.setAppUpdateEventsCount(eventService.getTotalAppUpdateEvents());
+	public List<Total> getTotals() {
+		List<Total> totals = new ArrayList<Total>();
 		
-		applicationService.populateAppCounts(total);
+		
+		totals.add(new Total("Total Orgs", orgService.getTotalOrgs()));
+		totals.add(new Total("Total Spaces", spaceService.getTotalSpaces()));
+		totals.add(new Total("Total Users", userService.getTotalUsers()));
+		totals.add(new Total("Total Buildpacks", buildpackService.getTotalBuildpacks()));
+		totals.add(new Total("Total Services", servicesService.getTotalServices()));
+		totals.add(new Total("Total Service Brokers", servicesService.getTotalServiceBrokers()));
+		totals.add(new Total("Total Service Instances", servicesService.getTotalServiceInstances()));
 
-		return total;
+		totals.add(new Total("Total App Create Events", eventService.getTotalAppCreateEvents()));
+		totals.add(new Total("Total App Delete Events", eventService.getTotalAppDeleteEvents()));
+		totals.add(new Total("Total App Authorized SSH Events", eventService.getTotalAuthorizedSSHEvents()));
+		totals.add(new Total("Total App UnAuthorized SSH Events", eventService.getTotaUnAuthorizedSSHEvents()));
+		totals.add(new Total("Total App Start Events", eventService.getTotalAppStartEvents()));
+		totals.add(new Total("Total App Stop Events", eventService.getTotalAppStartEvents()));
+		totals.add(new Total("Total App Update Events", eventService.getTotalAppUpdateEvents()));
+		totals.add(new Total("Total App Crash Events", eventService.getTotalAppCrashEvents()));
+
+		applicationService.populateAppCounts(totals);
+
+		return totals;
 	}
 }

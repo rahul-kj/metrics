@@ -35,7 +35,7 @@ public class EventService {
 		return totalCount;
 	}
 
-	public Integer getTotaUnlAuthorizedSSHEvents() {
+	public Integer getTotaUnAuthorizedSSHEvents() {
 		Map<String, Object> respMap = clientService.getResponseMap("/v2/events?q=type:audit.app.ssh-unauthorized");
 		Integer totalCount = clientService.getTotalResults(respMap);
 		return totalCount;

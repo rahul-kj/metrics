@@ -33,17 +33,7 @@ public class CloudFoundryClientService {
 	private static SimpleDateFormat dateFormatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
 	public Map<String, Object> getResponseMap(String path) {
-		OAuth2AccessToken token = cloudFoundryClient.login();
-		String authorizationHeaderValue = token.getTokenType() + " " + token.getValue();
-
-		String url = cloudFoundryClient.getCloudControllerUrl() + path;
-
-		HttpHeaders headers = new HttpHeaders();
-		headers.set(HttpHeaders.AUTHORIZATION, authorizationHeaderValue);
-
-		HttpEntity<String> httpEntity = new HttpEntity<String>(headers);
-
-		ResponseEntity<String> response = getRestTemplate().exchange(url, HttpMethod.GET, httpEntity, String.class);
+		ResponseEntity<String> response = getResponse(path);
 		Map<String, Object> respMap = JsonUtil.convertJsonToMap(response.getBody());
 		return respMap;
 	}
@@ -64,7 +54,7 @@ public class CloudFoundryClientService {
 
 	@SuppressWarnings("unchecked")
 	private String addPageOfResources(String nextUrl, List<Map<String, Object>> allResources) {
-		String resp = getRestTemplate().getForObject(getUrl(nextUrl), String.class);
+		String resp = getResponse(nextUrl).getBody();
 		Map<String, Object> respMap = JsonUtil.convertJsonToMap(resp);
 		List<Map<String, Object>> newResources = (List<Map<String, Object>>) respMap.get("resources");
 		if (newResources != null && newResources.size() > 0) {
@@ -106,6 +96,22 @@ public class CloudFoundryClientService {
 		String cloudControllerUrl = cloudFoundryClient.getCloudControllerUrl().toString();
 		return cloudControllerUrl + (path.startsWith("/") ? path : "/" + path);
 	}
+	
+	private ResponseEntity<String> getResponse(String path) {
+		OAuth2AccessToken token = cloudFoundryClient.login();
+		String authorizationHeaderValue = token.getTokenType() + " " + token.getValue();
+
+		String url = cloudFoundryClient.getCloudControllerUrl() + path;
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set(HttpHeaders.AUTHORIZATION, authorizationHeaderValue);
+
+		HttpEntity<String> httpEntity = new HttpEntity<String>(headers);
+
+		ResponseEntity<String> response = getRestTemplate().exchange(url, HttpMethod.GET, httpEntity, String.class);
+		return response;
+	}
+
 
 	private static Date parseDate(String dateString) {
 		if (dateString != null) {
