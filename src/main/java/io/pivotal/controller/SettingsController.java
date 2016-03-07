@@ -19,8 +19,9 @@ public class SettingsController {
 
 	@CrossOrigin
 	@RequestMapping(value = "mail", method = RequestMethod.POST)
-	public void configureEmail(@RequestBody Email email) {
+	public Email configureEmail(@RequestBody Email email) {
 		emailService.setEmail(email);
+		return emailService.getEmail();
 	}
 
 	@CrossOrigin
