@@ -3,13 +3,13 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>com.rahul</groupId>
+	<groupId>io.pivotal</groupId>
 	<artifactId>metrics</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
 	<name>metrics</name>
-	<description>Metrics from Ops Metrics</description>
+	<description>Metrics of a foundation</description>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>
@@ -41,6 +41,10 @@
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-mail</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-integration</artifactId>
 		</dependency>
 		<dependency>
@@ -54,9 +58,14 @@
 			<artifactId>cloudfoundry-client-lib</artifactId>
 			<version>${cf-java-client.version}</version>
 		</dependency>
+
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-solr</artifactId>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-spring-service-connector</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-cloudfoundry-connector</artifactId>
 		</dependency>
 	</dependencies>
 
