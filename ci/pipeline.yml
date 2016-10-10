@@ -1,0 +1,18 @@
+resources:
+- name: every-1m
+  type: time
+  source: {interval: 1m}
+
+- name: metrics-repo
+  type: git
+  source:
+    uri: https://github.com/rahul-kj/metrics.git
+    branch: master
+
+jobs:
+- name: build-code
+  plan:
+  - get: metrics-repo
+    trigger: true
+  - task: compile
+    file: metrics-repo/ci/tasks/build.yml
