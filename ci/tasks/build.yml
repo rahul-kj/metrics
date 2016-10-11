@@ -2,7 +2,7 @@ platform: linux
 
 image_resource:
   type: docker-image
-  source: {repository: ubuntu}
+  source: {repository: rjain/buildbox}
 
 inputs:
   - name: metrics-repo
