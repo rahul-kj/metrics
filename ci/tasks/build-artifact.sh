@@ -9,3 +9,5 @@ mvn -v
 
 mvn versions:set -DnewVersion=$VERSION
 mvn clean install
+
+mv target/metrics-*.jar ../build/

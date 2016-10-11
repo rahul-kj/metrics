@@ -8,5 +8,8 @@ inputs:
   - name: metrics-repo
   - name: version
 
+outputs:
+  - name: build  
+
 run:
   path: metrics-repo/ci/tasks/build-artifact.sh
