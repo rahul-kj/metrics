@@ -1,0 +1,25 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source: {repository: rjain/buildbox}
+
+inputs:
+  - name: metrics-repo
+  - name: metrics-release
+
+run:
+  path: metrics-repo/ci/tasks/cf-deployment.sh
+
+params:
+  API_ENDPOINT:
+  USERNAME:
+  PASSWORD:
+  ORG:
+  SPACE:
+  HOST:
+  SMTP_HOST:
+  SMTP_PORT:
+  SMTP_USERNAME:
+  SMTP_PASSWORD:
