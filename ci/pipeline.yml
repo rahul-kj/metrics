@@ -6,10 +6,121 @@ resources:
     uri: https://github.com/rahul-kj/metrics.git
     branch: master
 
+- name: version
+  type: semver
+  source:
+    bucket: {{s3-bucket-name}}
+    key: current-version
+    access_key_id: {{s3-access-key-id}}
+    secret_access_key: {{s3-secret-access-key}}
+    initial_version: 1.0.0
+
+- name: metrics-release
+  type: s3
+  source:
+    bucket: {{s3-bucket-name}}
+    regexp: metrics-(.*).jar
+    access_key_id: {{s3-access-key-id}}
+    secret_access_key: {{s3-secret-access-key}}
+
 jobs:
-- name: build-code
+- name: compile
   plan:
   - get: metrics-repo
     trigger: true
   - task: compile
     file: metrics-repo/ci/tasks/build.yml
+
+- name: generate-artifact
+  serial_groups: [version]
+  plan:
+  - get: metrics-repo
+    passed: [compile]
+    trigger: true
+  - get: version
+    params: {bump: major}
+  - task: build-artifact
+    file: metrics-repo/ci/tasks/build-artifact.yml
+  - put: metrics-release
+    params: {file: build/metrics-*.jar}
+  - put: version
+    params: {file: version/number}
+
+- name: acceptance-tests
+  plan:
+  - aggregate:
+    - get: metrics-release
+      passed: [generate-artifact]
+      trigger: true
+    - get: metrics-repo
+      passed: [generate-artifact]
+      trigger: true
+  - task: deploy-to-dev
+    file: metrics-repo/ci/tasks/cf-deployment.yml
+    config:
+      params:
+        API_ENDPOINT: {{api-endpoint}}
+        USERNAME: {{dev-username}}
+        PASSWORD: {{dev-password}}
+        ORG: {{dev-org}}
+        SPACE: {{dev-space}}
+        HOST: metrics
+        SMTP_HOST: {{smtp-server}}
+        SMTP_PORT: {{smtp-port}}
+        SMTP_USERNAME: {{smtp-username}}
+        SMTP_PASSWORD: {{smtp-password}}
+  - task: cats
+    file: metrics-repo/ci/tasks/cats.yml
+    config:
+      params:
+        APP_URL: http://metrics-dev.cfapps.io
+
+- name: promote-to-uat
+  plan:
+  - aggregate:
+    - get: metrics-release
+      passed: [acceptance-tests]
+      trigger: true
+    - get: metrics-repo
+      passed: [acceptance-tests]
+      trigger: true
+  - task: deploy-to-uat
+    file: metrics-repo/ci/tasks/cf-deployment.yml
+    config:
+      params:
+        API_ENDPOINT: {{api-endpoint}}
+        USERNAME: {{staging-username}}
+        PASSWORD: {{staging-password}}
+        ORG: {{staging-org}}
+        SPACE: {{staging-space}}
+        HOST: metrics
+        SMTP_HOST: {{smtp-server}}
+        SMTP_PORT: {{smtp-port}}
+        SMTP_USERNAME: {{smtp-username}}
+        SMTP_PASSWORD: {{smtp-password}}
+- name: manual-deploy-to-prod
+  serial: true
+  plan:
+  - aggregate:
+    - get: metrics-release
+      passed: [promote-to-uat]
+    - get: metrics-repo
+      passed: [promote-to-uat]
+  - task: deploy-to-prod
+    file: metrics-repo/ci/tasks/cf-deployment.yml
+    config:
+      params:
+        API_ENDPOINT: {{api-endpoint}}
+        USERNAME: {{prod-username}}
+        PASSWORD: {{prod-password}}
+        ORG: {{prod-org}}
+        SPACE: {{prod-space}}
+        HOST: metrics
+        SMTP_HOST: {{smtp-server}}
+        SMTP_PORT: {{smtp-port}}
+        SMTP_USERNAME: {{smtp-username}}
+        SMTP_PASSWORD: {{smtp-password}}
+        JMX_HOST: {{jmx-host}}
+        JMX_PORT: {{jmx-port}}
+        JMX_USER: {{jmx-user}}
+        JMX_PASSWORD: {{jmx-password}}

@@ -20,18 +20,18 @@ eval $push
 
 cf set-env metrics SPRING_PROFILES_ACTIVE jmx
 cf set-env metrics JBP_CONFIG_CONTAINER_CERTIFICATE_TRUST_STORE '{enabled: true}'
-cf set-env metrics jmx.host 172.16.1.46
-cf set-env metrics jmx.port 44444
-cf set-env metrics jmx.username jmxadmin
-cf set-env metrics jmx.password: jmxadmin
+cf set-env metrics jmx.host $JMX_HOST
+cf set-env metrics jmx.port $JMX_PORT
+cf set-env metrics jmx.username $JMX_USER
+cf set-env metrics jmx.password $JMX_PASSWORD
 cf set-env metrics cf.target $API_ENDPOINT
 cf set-env metrics cf.username $USERNAME
 cf set-env metrics cf.password $PASSWORD
 cf set-env metrics mail.protocol smtp
 cf set-env metrics mail.host $SMTP_HOST
-cf set-env metrics mail.port 587
-cf set-env metrics mail.username blackhawk
-cf set-env metrics mail.password Welcome12#
+cf set-env metrics mail.port $SMTP_PORT
+cf set-env metrics mail.username $SMTP_USERNAME
+cf set-env metrics mail.password $SMTP_PASSWORD
 cf set-env metrics mail.starttls true
 cf set-env metrics mail.auth true
 
