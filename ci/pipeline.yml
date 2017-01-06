@@ -64,16 +64,20 @@ jobs:
         PASSWORD: {{dev-password}}
         ORG: {{dev-org}}
         SPACE: {{dev-space}}
-        HOST: metrics
+        HOST: {{dev-app-name}}
         SMTP_HOST: {{smtp-server}}
         SMTP_PORT: {{smtp-port}}
         SMTP_USERNAME: {{smtp-username}}
         SMTP_PASSWORD: {{smtp-password}}
+        JMX_HOST: {{jmx-host}}
+        JMX_PORT: {{jmx-port}}
+        JMX_USER: {{jmx-user}}
+        JMX_PASSWORD: {{jmx-password}}
   - task: cats
     file: metrics-repo/ci/tasks/cats.yml
     config:
       params:
-        APP_URL: http://metrics-dev.cfapps.io
+        APP_URL: {{dev-app-url}}
 
 - name: promote-to-uat
   plan:
@@ -93,11 +97,15 @@ jobs:
         PASSWORD: {{staging-password}}
         ORG: {{staging-org}}
         SPACE: {{staging-space}}
-        HOST: metrics
+        HOST: {{staging-app-name}}
         SMTP_HOST: {{smtp-server}}
         SMTP_PORT: {{smtp-port}}
         SMTP_USERNAME: {{smtp-username}}
         SMTP_PASSWORD: {{smtp-password}}
+        JMX_HOST: {{jmx-host}}
+        JMX_PORT: {{jmx-port}}
+        JMX_USER: {{jmx-user}}
+        JMX_PASSWORD: {{jmx-password}}
 - name: manual-deploy-to-prod
   serial: true
   plan:
@@ -115,7 +123,7 @@ jobs:
         PASSWORD: {{prod-password}}
         ORG: {{prod-org}}
         SPACE: {{prod-space}}
-        HOST: metrics
+        HOST: {{prod-app-name}}
         SMTP_HOST: {{smtp-server}}
         SMTP_PORT: {{smtp-port}}
         SMTP_USERNAME: {{smtp-username}}
