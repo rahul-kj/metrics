@@ -57,27 +57,25 @@ jobs:
       trigger: true
   - task: deploy-to-dev
     file: metrics-repo/ci/tasks/cf-deployment.yml
-    config:
-      params:
-        API_ENDPOINT: {{api-endpoint}}
-        USERNAME: {{dev-username}}
-        PASSWORD: {{dev-password}}
-        ORG: {{dev-org}}
-        SPACE: {{dev-space}}
-        HOST: {{dev-app-name}}
-        SMTP_HOST: {{smtp-server}}
-        SMTP_PORT: {{smtp-port}}
-        SMTP_USERNAME: {{smtp-username}}
-        SMTP_PASSWORD: {{smtp-password}}
-        JMX_HOST: {{jmx-host}}
-        JMX_PORT: {{jmx-port}}
-        JMX_USER: {{jmx-user}}
-        JMX_PASSWORD: {{jmx-password}}
+    params:
+      API_ENDPOINT: {{api-endpoint}}
+      USERNAME: {{dev-username}}
+      PASSWORD: {{dev-password}}
+      ORG: {{dev-org}}
+      SPACE: {{dev-space}}
+      HOST: {{dev-app-name}}
+      SMTP_HOST: {{smtp-server}}
+      SMTP_PORT: {{smtp-port}}
+      SMTP_USERNAME: {{smtp-username}}
+      SMTP_PASSWORD: {{smtp-password}}
+      JMX_HOST: {{jmx-host}}
+      JMX_PORT: {{jmx-port}}
+      JMX_USER: {{jmx-user}}
+      JMX_PASSWORD: {{jmx-password}}
   - task: cats
     file: metrics-repo/ci/tasks/cats.yml
-    config:
-      params:
-        APP_URL: {{dev-app-url}}
+    params:
+      APP_URL: {{dev-app-url}}
 
 - name: promote-to-uat
   plan:
@@ -90,22 +88,21 @@ jobs:
       trigger: true
   - task: deploy-to-uat
     file: metrics-repo/ci/tasks/cf-deployment.yml
-    config:
-      params:
-        API_ENDPOINT: {{api-endpoint}}
-        USERNAME: {{staging-username}}
-        PASSWORD: {{staging-password}}
-        ORG: {{staging-org}}
-        SPACE: {{staging-space}}
-        HOST: {{staging-app-name}}
-        SMTP_HOST: {{smtp-server}}
-        SMTP_PORT: {{smtp-port}}
-        SMTP_USERNAME: {{smtp-username}}
-        SMTP_PASSWORD: {{smtp-password}}
-        JMX_HOST: {{jmx-host}}
-        JMX_PORT: {{jmx-port}}
-        JMX_USER: {{jmx-user}}
-        JMX_PASSWORD: {{jmx-password}}
+    params:
+      API_ENDPOINT: {{api-endpoint}}
+      USERNAME: {{staging-username}}
+      PASSWORD: {{staging-password}}
+      ORG: {{staging-org}}
+      SPACE: {{staging-space}}
+      HOST: {{staging-app-name}}
+      SMTP_HOST: {{smtp-server}}
+      SMTP_PORT: {{smtp-port}}
+      SMTP_USERNAME: {{smtp-username}}
+      SMTP_PASSWORD: {{smtp-password}}
+      JMX_HOST: {{jmx-host}}
+      JMX_PORT: {{jmx-port}}
+      JMX_USER: {{jmx-user}}
+      JMX_PASSWORD: {{jmx-password}}
 - name: manual-deploy-to-prod
   serial: true
   plan:
@@ -116,19 +113,18 @@ jobs:
       passed: [promote-to-uat]
   - task: deploy-to-prod
     file: metrics-repo/ci/tasks/cf-deployment.yml
-    config:
-      params:
-        API_ENDPOINT: {{api-endpoint}}
-        USERNAME: {{prod-username}}
-        PASSWORD: {{prod-password}}
-        ORG: {{prod-org}}
-        SPACE: {{prod-space}}
-        HOST: {{prod-app-name}}
-        SMTP_HOST: {{smtp-server}}
-        SMTP_PORT: {{smtp-port}}
-        SMTP_USERNAME: {{smtp-username}}
-        SMTP_PASSWORD: {{smtp-password}}
-        JMX_HOST: {{jmx-host}}
-        JMX_PORT: {{jmx-port}}
-        JMX_USER: {{jmx-user}}
-        JMX_PASSWORD: {{jmx-password}}
+    params:
+      API_ENDPOINT: {{api-endpoint}}
+      USERNAME: {{prod-username}}
+      PASSWORD: {{prod-password}}
+      ORG: {{prod-org}}
+      SPACE: {{prod-space}}
+      HOST: {{prod-app-name}}
+      SMTP_HOST: {{smtp-server}}
+      SMTP_PORT: {{smtp-port}}
+      SMTP_USERNAME: {{smtp-username}}
+      SMTP_PASSWORD: {{smtp-password}}
+      JMX_HOST: {{jmx-host}}
+      JMX_PORT: {{jmx-port}}
+      JMX_USER: {{jmx-user}}
+      JMX_PASSWORD: {{jmx-password}}
